@@ -75,7 +75,7 @@ namespace PavelLeagueBot
                     await riotClient.SetRank();
                     var newRank = RiotApiClient.herdynRank;
                     LastMatchParticipant pavel = lastGame.Participants.Where(x => x.Puuid == SecretsConfig.Credentials.HerdynRiotID).First();
-                    decimal csPerMinute = pavel.GetCS() / lastGame.GameDuration * 60;
+                    decimal csPerMinute = pavel.GetCS() / (lastGame.GameDuration / 60);
 
                     StringBuilder builder = new StringBuilder("PAVEL PRÁVĚ ");
                     builder
