@@ -58,7 +58,6 @@ namespace PavelLeagueBot
       API = new TwitchAPI();
       API.Settings.ClientId = SecretsConfig.Credentials.ClientId;
       API.Settings.AccessToken = SecretsConfig.Credentials.AccessToken;
-
       Monitor = new LiveStreamMonitorService(API, 30);
 
       Monitor.OnStreamOnline += Monitor_OnStreamOnline;
@@ -79,10 +78,16 @@ namespace PavelLeagueBot
       => Log.Information("Live stream monitor started monitoring.");
 
     private void Monitor_OnStreamOffline(object? sender, TwitchLib.Api.Services.Events.LiveStreamMonitor.OnStreamOfflineArgs e)
-      => isOnline = false;
+    {
+      isOnline = false;
+      Log.Information("stream offline");
+    }
 
     private void Monitor_OnStreamOnline(object? sender, TwitchLib.Api.Services.Events.LiveStreamMonitor.OnStreamOnlineArgs e)
-      => isOnline = true;
+    {
+      isOnline = true;
+      Log.Information("stream live");
+    }
 
     public static void WriteMessage(string message)
       => _client.SendMessage(connectedChannel, message);
@@ -97,7 +102,9 @@ namespace PavelLeagueBot
       => Log.Error($"TwitchLib error: {0}: {1}", e.Exception, e.Exception.Message);
 
     private void Client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
-      => Log.Information("{username} connected.", e.BotUsername);
+    {
+      Log.Information("{username} connected.", e.BotUsername);
+    }
 
     private void Client_OnJoinedChannel(object? sender, TwitchLib.Client.Events.OnJoinedChannelArgs e)
       => Log.Information("Joined {channel}.", e.Channel);

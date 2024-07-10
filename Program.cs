@@ -54,6 +54,7 @@ namespace PavelLeagueBot
           Thread.Sleep(60000);
           if (!Bot.isOnline)
           {
+            Log.Information("Checking for a game");
             try
             {
               var game = await riotClient.CheckLiveGame().ConfigureAwait(false);
@@ -180,6 +181,10 @@ namespace PavelLeagueBot
                 Bot.WriteMessage("game has ended");
               continue;
             }
+          }
+          else
+          {
+            Log.Information("pavel is streaming");
           }
         }
       });
