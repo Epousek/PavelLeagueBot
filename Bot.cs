@@ -58,14 +58,14 @@ namespace PavelLeagueBot
       API = new TwitchAPI();
       API.Settings.ClientId = SecretsConfig.Credentials.ClientId;
       API.Settings.AccessToken = SecretsConfig.Credentials.AccessToken;
-      Monitor = new LiveStreamMonitorService(API, 30);
+      Monitor = new LiveStreamMonitorService(API, 60);
 
       Monitor.OnStreamOnline += Monitor_OnStreamOnline;
       Monitor.OnStreamOffline += Monitor_OnStreamOffline;
       Monitor.OnServiceStarted += Monitor_OnServiceStarted;
       Monitor.OnServiceStopped += Monitor_OnServiceStopped;
 
-      Monitor.SetChannelsByName(["Herdyn"]);
+      Monitor.SetChannelsByName(["herdyn"]);
       Monitor.Start();
 
       await Task.Delay(-1);
