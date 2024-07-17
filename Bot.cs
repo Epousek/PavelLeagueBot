@@ -17,15 +17,12 @@ namespace PavelLeagueBot
   internal class Bot
   {
     private static TwitchClient _client;
-    private static string connectedChannel = Debugger.IsAttached ? "donkousek" : "herdyn"; //change to herdyn
-    private TwitchAPI API;
-    private LiveStreamMonitorService Monitor;
+    private static string connectedChannel = Debugger.IsAttached ? "donkousek" : "herdyn";
 
     public static bool isOnline;
 
     public Bot()
     {
-      Task.Run(async () => await ConfigLiveMonitorAsync());
 
       var creds = new ConnectionCredentials(SecretsConfig.Credentials.Username, SecretsConfig.Credentials.AccessToken);
       var clientOptions = new ClientOptions
@@ -51,42 +48,6 @@ namespace PavelLeagueBot
         Log.Error("Couldn't connet to chat: {message}", e.Message);
         Reconnect();
       }
-    }
-
-    private async Task ConfigLiveMonitorAsync()
-    {
-      API = new TwitchAPI();
-      API.Settings.ClientId = SecretsConfig.Credentials.ClientId;
-      API.Settings.AccessToken = SecretsConfig.Credentials.AccessToken;
-      Monitor = new LiveStreamMonitorService(API, 60);
-
-      Monitor.OnStreamOnline += Monitor_OnStreamOnline;
-      Monitor.OnStreamOffline += Monitor_OnStreamOffline;
-      Monitor.OnServiceStarted += Monitor_OnServiceStarted;
-      Monitor.OnServiceStopped += Monitor_OnServiceStopped;
-
-      Monitor.SetChannelsByName(["herdyn"]);
-      Monitor.Start();
-
-      await Task.Delay(-1);
-    }
-
-    private void Monitor_OnServiceStopped(object? sender, TwitchLib.Api.Services.Events.OnServiceStoppedArgs e)
-      => Log.Error("Live stream monitor stopped monitoring for some reason.");
-
-    private void Monitor_OnServiceStarted(object? sender, TwitchLib.Api.Services.Events.OnServiceStartedArgs e)
-      => Log.Information("Live stream monitor started monitoring.");
-
-    private void Monitor_OnStreamOffline(object? sender, TwitchLib.Api.Services.Events.LiveStreamMonitor.OnStreamOfflineArgs e)
-    {
-      isOnline = false;
-      Log.Information("stream offline");
-    }
-
-    private void Monitor_OnStreamOnline(object? sender, TwitchLib.Api.Services.Events.LiveStreamMonitor.OnStreamOnlineArgs e)
-    {
-      isOnline = true;
-      Log.Information("stream live");
     }
 
     public static void WriteMessage(string message)
