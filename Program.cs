@@ -59,6 +59,8 @@ namespace PavelLeagueBot
               {
                 if (currentMatchID != null) //game end
                 {
+                  currentMatchID = null;
+
                   Log.Information("Game has ended.");
                   if (await twitchClient.CheckLive("herdyn"))
                   {
@@ -67,9 +69,7 @@ namespace PavelLeagueBot
                   }
                   else
                   {
-                    currentMatchID = null;
                     var lastGame = (await riotClient.GetLastMatchInfo().ConfigureAwait(false)).LastGame;
-
                     if (lastGame == null)
                     {
                       Log.Error("Didn't get last game info, can't write a message about it.");
