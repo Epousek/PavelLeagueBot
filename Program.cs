@@ -49,7 +49,7 @@ namespace PavelLeagueBot
         while (true)
         {
           Thread.Sleep(60000);
-          if (!Bot.isOnline)
+          if (!Bot.isOnline) //i can get rid of this if statement
           {
             //Log.Information("Checking for a game");
             try
@@ -164,6 +164,7 @@ namespace PavelLeagueBot
               {
                 Log.Information("Game has started.");
                 await riotClient.SetRank();
+                currentMatchID = game.GameID;
 
                 if (await twitchClient.CheckLive("herdyn"))
                 {
@@ -171,7 +172,6 @@ namespace PavelLeagueBot
                 }
                 else
                 {
-                  currentMatchID = game.GameID;
                   Participant pavel = game.Participants.Where(x => x.Puuid == SecretsConfig.Credentials.HerdynRiotID).ToList().First();
                   string champion = RiotApiClient.champions.Where(x => x.ID == pavel.ChampionID).ToList().First().Name;
                   string side = pavel.TeamID == "100" ? "🟦 BLUE SIDE 🟦" : "🟥 RED SIDE 🟥";
