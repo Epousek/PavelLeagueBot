@@ -13,18 +13,18 @@ namespace PavelLeagueBot
     {
       await Task.Run(async () =>
       {
+        _client ??= new TwitchApiClient();
         while (true)
         {
-          await Task.Run(ValidateAccessToken).ConfigureAwait(false);
-          Thread.Sleep(TimeSpan.FromHours(1));
+          int expiresIn = await Task.Run(RefreshAccessToken).ConfigureAwait(false);
+          Thread.Sleep(TimeSpan.FromSeconds(expiresIn) - TimeSpan.FromMinutes(10));
         }
       }).ConfigureAwait(false);
     }
 
-    private static async Task ValidateAccessToken()
+    private static async Task<int> RefreshAccessToken()
     {
-      _client ??= new TwitchApiClient();
-      await _client.ValidateAccessToken().ConfigureAwait(false);
+      return await _client.RefreshTokens().ConfigureAwait(false);
     }
   }
 }

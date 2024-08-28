@@ -49,7 +49,7 @@ namespace PavelLeagueBot.Connections
       }
     }
 
-    public async Task ValidateAccessToken()
+    public async Task<int> ValidateAccessToken()  //NOT USING THIS RN, BUT COULD MAYBE BE USED LATER
     {
       Log.Information("Trying to validate app access token");
       var request = new RestRequest("oauth2/validate");
@@ -63,23 +63,23 @@ namespace PavelLeagueBot.Connections
       {
         var responseJson = JObject.Parse(response.Content);
         var validationResponse = responseJson.ToObject<TokenValidationResponse>();
-        if (validationResponse.ExpiresIn < 5400)
+        Log.Information("Token expires in about {expiresIn} hours", TimeSpan.FromSeconds(validationResponse.ExpiresIn).TotalHours);
+
+        if (validationResponse.ExpiresIn < TimeSpan.FromMinutes(10).TotalSeconds)
         {
-          Log.Information("Token is about to expire, refreshing.");
-          await RefreshTokens().ConfigureAwait(false);
+          int expiresIn = await RefreshTokens();
+          return expiresIn;
         }
-        else
-        {
-          Log.Information("Token expires in about {expiresIn} hours", TimeSpan.FromSeconds(validationResponse.ExpiresIn).TotalHours);
-        }
+        return validationResponse.ExpiresIn;
       }
       else
       {
         Log.Error("Couldn't validate: {statusDescription}", response.StatusDescription);
+        return -1;
       }
     }
 
-    private async Task RefreshTokens()
+    public async Task<int> RefreshTokens()
     {
       Log.Information("Trying to refresh token.");
 
@@ -100,10 +100,13 @@ namespace PavelLeagueBot.Connections
         var responseJson = JObject.Parse(response.Content);
         var newToken = responseJson.ToObject<AppAccessToken>();
         await SecretsConfig.SetToken(newToken).ConfigureAwait(false);
+
+        return newToken.ExpiresIn;
       }
       else
       {
         Log.Error(response.ErrorException, "Failed to refresh token: {statusDescription}.", response.StatusDescription);
+        throw new Exception("Failed to refresh token.");
       }
     }
   }
