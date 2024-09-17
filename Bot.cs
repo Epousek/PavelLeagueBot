@@ -16,6 +16,7 @@ namespace PavelLeagueBot
 {
   internal class Bot
   {
+    private bool _connected;
     private static TwitchClient _client;
     private static string connectedChannel = Debugger.IsAttached ? "donkousek" : "herdyn";
 
@@ -55,6 +56,7 @@ namespace PavelLeagueBot
 
     private async void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
     {
+      _connected = false;
       Log.Error("he disconnected");      //RANDOM DISCONNECTS!?!?..,"!"?
       await Reconnect();
     }
@@ -64,6 +66,7 @@ namespace PavelLeagueBot
 
     private void Client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
     {
+      _connected = true;
       Log.Information("{username} connected.", e.BotUsername);
     }
 
@@ -74,16 +77,23 @@ namespace PavelLeagueBot
     {
       int timeout = 1;
 
-      while (!_client.IsConnected)
+      try
       {
+        _client.Disconnect();
+      }
+      catch (Exception)
+      { }
+
+      while (!_connected)
+      {
+        if (timeout > 64)
+          throw new Exception("Too many reconnect attempts, we're shutting down...");
+
         timeout = 2 * timeout;
         Log.Information("Trying to (re)connect, next attempt in {time} minutes", timeout);
 
         _client.Connect();
         Thread.Sleep(TimeSpan.FromMinutes(timeout));
-
-        if (timeout > 64)
-          throw new Exception("Too many reconnect attempts, we're shutting down...");
       }
     }
   }
