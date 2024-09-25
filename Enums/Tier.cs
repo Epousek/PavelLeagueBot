@@ -11,6 +11,7 @@
     DIAMOND = 7,
     MASTER = 8,
     GRANDMASTER = 9,
-    CHALLENGER = 10
+    CHALLENGER = 10,
+    UNRANKED = 11
   }
 }

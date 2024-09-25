@@ -126,22 +126,34 @@ namespace PavelLeagueBot.Connections
         var rank = new HerdynRank();
         //rank.Rank = responseJson[0]["rank"].ToString();
         //rank.Tier = responseJson[0]["tier"].ToString();
-        string rankStr = responseJson[0]["rank"].ToString();
-        string tierStr = responseJson[0]["tier"].ToString();
 
-        if (Enum.TryParse<Rank>(rankStr, true, out Rank rankEnum) && Enum.TryParse<Tier>(tierStr, true, out Tier tierEnum))
+        if (!responseJson.HasValues)
         {
-          rank.Rank = rankEnum;
-          rank.Tier = tierEnum;
+          rank.Tier = Tier.UNRANKED;
+          rank.Rank = Rank.I;
+          rank.LeaguePoints = 0;
+          rank.Wins = 0;
+          rank.Losses = 0;
         }
         else
         {
-          Log.Error("Failed to parse rank/tier into enum.");
-        }
+          string rankStr = responseJson[0]["rank"].ToString();
+          string tierStr = responseJson[0]["tier"].ToString();
 
-        rank.LeaguePoints = (int)responseJson[0]["leaguePoints"];
-        rank.Losses = (int)responseJson[0]["losses"];
-        rank.Wins = (int)responseJson[0]["wins"];
+          if (Enum.TryParse<Rank>(rankStr, true, out Rank rankEnum) && Enum.TryParse<Tier>(tierStr, true, out Tier tierEnum))
+          {
+            rank.Rank = rankEnum;
+            rank.Tier = tierEnum;
+          }
+          else
+          {
+            Log.Error("Failed to parse rank/tier into enum.");
+          }
+
+          rank.LeaguePoints = (int)responseJson[0]["leaguePoints"];
+          rank.Losses = (int)responseJson[0]["losses"];
+          rank.Wins = (int)responseJson[0]["wins"];
+        }
 
         herdynRank = rank;
         Log.Information("Successfully set herdyn's rank.");

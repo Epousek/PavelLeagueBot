@@ -21,6 +21,6 @@ namespace PavelLeagueBot.Models
     public int Losses { get; set; }
 
     public string GetRank()
-      => $"{Tier} {Rank} {LeaguePoints} LP";
+      => Tier == Tier.UNRANKED ? $"{Tier}" : $"{Tier} {Rank} {LeaguePoints} LP";
   }
 }

@@ -109,9 +109,10 @@ namespace PavelLeagueBot
                         builder.Append("FIRST BREAK 😎 ");
                       if (pavel.Surrender || pavel.EarlySurrender)
                         builder.Append("SURRENDER FailFish ");
-                      builder
-                        .Append(newRank.GetRank());
-                      if (oldRank.Rank == newRank.Rank && oldRank.Tier == newRank.Tier) //no demotion/promotion
+                      builder.Append(newRank.GetRank());
+                      if (oldRank.Tier == Enums.Tier.UNRANKED || newRank.Tier == Enums.Tier.UNRANKED) //was/is unranked
+                      { }
+                      else if (oldRank.Rank == newRank.Rank && oldRank.Tier == newRank.Tier) //no demotion/promotion
                       {
                         int diff = oldRank.LeaguePoints - newRank.LeaguePoints;
                         builder
@@ -165,6 +166,7 @@ namespace PavelLeagueBot
                 Log.Information("Game has started.");
                 await riotClient.SetRank();
                 currentMatchID = game.GameID;
+                var rank = RiotApiClient.herdynRank;
 
                 if (await twitchClient.CheckLive("herdyn"))
                 {
@@ -179,9 +181,11 @@ namespace PavelLeagueBot
                   StringBuilder builder = new StringBuilder("DinkDonk PAVEL PRÁVĚ ZAPNUL HRU DinkDonk ");
                   builder
                     .Append(champion.ToUpper())
-                    .Append(pavel.TeamID == "100" ? " \U0001f7e6 BLUE SIDE \U0001f7e6 " : " \U0001f7e5 RED SIDE \U0001f7e5 ")
-                    .Append(RiotApiClient.herdynRank.GetRank())
-                    .Append(" LETHIMCOOK");
+                    .Append(pavel.TeamID == "100" ? " \U0001f7e6 BLUE SIDE \U0001f7e6 " : " \U0001f7e5 RED SIDE \U0001f7e5 ");
+                  if (rank.Tier != Enums.Tier.UNRANKED)
+                    builder
+                      .Append(rank.GetRank())
+                      .Append(" LETHIMCOOK");
 
                   Bot.WriteMessage(builder.ToString());
                 }
