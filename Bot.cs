@@ -17,14 +17,19 @@ namespace PavelLeagueBot
   internal class Bot
   {
     private bool _connected;
-    private static TwitchClient _client;
+    private bool _reconnecting;
+    private static TwitchClient? _client;
     private static string connectedChannel = Debugger.IsAttached ? "donkousek" : "herdyn";
 
     public static bool isOnline;
 
     public Bot()
     {
+      Initialize();
+    }
 
+    public async Task Initialize()
+    {
       var creds = new ConnectionCredentials(SecretsConfig.Credentials.Username, SecretsConfig.Credentials.AccessToken);
       var clientOptions = new ClientOptions
       {
@@ -47,7 +52,8 @@ namespace PavelLeagueBot
       catch (Exception e)
       {
         Log.Error("Couldn't connet to chat: {message}", e.Message);
-        Reconnect();
+        //if (!_reconnecting)
+        //  await Reconnect();
       }
     }
 
@@ -57,8 +63,10 @@ namespace PavelLeagueBot
     private async void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
     {
       _connected = false;
-      Log.Error("he disconnected");      //RANDOM DISCONNECTS!?!?..,"!"?
-      await Reconnect();
+      Log.Error("he disconnected, crashing the plane");      //RANDOM DISCONNECTS!?!?..,"!"?
+      throw new Exception();
+      //if (!_reconnecting)
+      //  await Reconnect();
     }
 
     private void Client_OnError(object? sender, TwitchLib.Communication.Events.OnErrorEventArgs e)
@@ -66,35 +74,31 @@ namespace PavelLeagueBot
 
     private void Client_OnConnected(object? sender, TwitchLib.Client.Events.OnConnectedArgs e)
     {
-      _connected = true;
+      //_connected = true;
+      //_reconnecting = false;
       Log.Information("{username} connected.", e.BotUsername);
     }
 
     private void Client_OnJoinedChannel(object? sender, TwitchLib.Client.Events.OnJoinedChannelArgs e)
       => Log.Information("Joined {channel}.", e.Channel);
 
-    private async Task Reconnect()
-    {
-      int timeout = 1;
+    //private async Task Reconnect()
+    //{
+    //  int timeout = 1;
+    //  _reconnecting = true;
 
-      try
-      {
-        _client.Disconnect();
-      }
-      catch (Exception)
-      { }
+    //  while (!_connected)
+    //  {
+    //    if (timeout > 64)
+    //      throw new Exception("Too many reconnect attempts, we're shutting down...");
 
-      while (!_connected)
-      {
-        if (timeout > 64)
-          throw new Exception("Too many reconnect attempts, we're shutting down...");
+    //    timeout = 2 * timeout;
+    //    Log.Information("Trying to (re)connect, next attempt in {time} minutes", timeout);
 
-        timeout = 2 * timeout;
-        Log.Information("Trying to (re)connect, next attempt in {time} minutes", timeout);
-
-        _client.Connect();
-        Thread.Sleep(TimeSpan.FromMinutes(timeout));
-      }
-    }
+    //    _client = null;
+    //    await Initialize();
+    //    Thread.Sleep(TimeSpan.FromMinutes(timeout));
+    //  }
+    //}
   }
 }
