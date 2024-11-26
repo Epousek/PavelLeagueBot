@@ -81,10 +81,11 @@ namespace PavelLeagueBot
                       var newRank = RiotApiClient.herdynRank;
                       LastMatchParticipant pavel = lastGame.Participants.Where(x => x.Puuid == SecretsConfig.Credentials.HerdynRiotID).First();
                       decimal csPerMinute = pavel.GetCS() / (lastGame.GameDuration / 60);
+                      var ge = oldRank.Tier == Enums.Tier.DIAMOND ? "Emeraldge" : "Platinumge";
 
                       StringBuilder builder = new StringBuilder("PAVEL PRÁVĚ ");
                       builder
-                        .Append(pavel.Win ? "VYHRÁL OOOO " : "PROHRÁL Emeraldge FBCatch ")
+                        .Append(pavel.Win ? "VYHRÁL OOOO " : $"PROHRÁL {ge} FBCatch ")
                         .Append(pavel.Kills)
                         .Append("/")
                         .Append(pavel.Deaths)
@@ -95,7 +96,7 @@ namespace PavelLeagueBot
                         .Append(" ⚠️ ")
                         .Append(pavel.GetCS())
                         .Append(" CS (")
-                        .Append(Math.Round(csPerMinute, 1))   //not tested
+                        .Append(Math.Round(csPerMinute, 1))
                         .Append("/min) ⚠️ DAMAGE DEALT: ")
                         .Append(pavel.DamageToChamps)
                         .Append(" ⚠️ DAMAGE TAKEN: ")
@@ -141,7 +142,7 @@ namespace PavelLeagueBot
                       {
                         int diff = (100 - oldRank.LeaguePoints) + newRank.LeaguePoints;
                         builder
-                          .Append(" (PROMOTED!! +")
+                          .Append(" (PROMOTED!! OOOO +")
                           .Append(diff)
                           .Append(')');
                       }
@@ -149,7 +150,7 @@ namespace PavelLeagueBot
                       {
                         int diff = oldRank.LeaguePoints + (100 - newRank.LeaguePoints);
                         builder
-                          .Append(" (DEMOTED!! -")
+                          .Append(" (DEMOTED!! forsenLaughingAtYou -")
                           .Append(diff)
                           .Append(')');
                       }
