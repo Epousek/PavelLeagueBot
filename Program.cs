@@ -74,6 +74,10 @@ namespace PavelLeagueBot
                     {
                       Log.Error("Didn't get last game info, can't write a message about it.");
                     }
+                    else if (lastGame.GameType != "MATCHED")
+                    {
+                      Log.Information("Game was not ranked, not sending a message.");
+                    }
                     else
                     {
                       var oldRank = RiotApiClient.herdynRank;
@@ -172,6 +176,10 @@ namespace PavelLeagueBot
                 if (await twitchClient.CheckLive("herdyn"))
                 {
                   Log.Information("Stream is live, not sending a message.");
+                }
+                else if (game.GameType != "MATCHED")
+                {
+                  Log.Information("Not playing ranked, not sending a message.");
                 }
                 else
                 {

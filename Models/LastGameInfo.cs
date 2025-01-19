@@ -13,6 +13,9 @@ namespace PavelLeagueBot.Models
     [JsonProperty("gameId")]
     public long GameId { get; set; }
 
+    [JsonProperty("gameType")]
+    public string GameType { get; set; }
+
     [JsonProperty("participants")]
     public List<LastMatchParticipant> Participants { get; set; }
   }

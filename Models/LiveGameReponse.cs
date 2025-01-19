@@ -26,5 +26,7 @@ namespace PavelLeagueBot.Models
     public string GameStartTime { get; set; }
     [JsonProperty("gameLength")]
     public string GameLength { get; set; }
+    [JsonProperty("gameType")]
+    public string GameType { get; set; }
   }
 }
