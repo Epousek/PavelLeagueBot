@@ -74,7 +74,7 @@ namespace PavelLeagueBot
                     {
                       Log.Error("Didn't get last game info, can't write a message about it.");
                     }
-                    else if (lastGame.GameType != "MATCHED")
+                    else if (!lastGame.GameType.Contains("MATCHED"))
                     {
                       Log.Information("Game was not ranked, not sending a message.");
                     }
@@ -177,7 +177,7 @@ namespace PavelLeagueBot
                 {
                   Log.Information("Stream is live, not sending a message.");
                 }
-                else if (game.GameType != "MATCHED")
+                else if (!game.GameType.Contains("MATCHED"))
                 {
                   Log.Information("Not playing ranked, not sending a message.");
                 }
