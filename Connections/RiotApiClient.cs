@@ -124,6 +124,16 @@ namespace PavelLeagueBot.Connections
       {
         var responseJson = JArray.Parse(response.Content);
         var rank = new HerdynRank();
+
+        foreach (var item in responseJson)
+        {
+          if (item["queueType"].ToString() == "RANKED_FLEX_SR")
+          {
+            responseJson.Remove(item);
+            break;
+          }
+        }
+
         //rank.Rank = responseJson[0]["rank"].ToString();
         //rank.Tier = responseJson[0]["tier"].ToString();
 
